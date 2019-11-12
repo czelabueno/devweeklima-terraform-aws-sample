@@ -371,7 +371,8 @@ module.lambda_function.aws_lambda_function.lambda: Refreshing state... [id=Serve
 Plan: 0 to add, 1 to change, 0 to destroy.
 
 ------------------------------------------------------------------------
-
+```
+```bash
  $ terraform apply --auto-approve -var secret_key=<my_aws_secret_key> -var app_version=1.0.1
 
 module.lambda_function.aws_iam_role.lambda_exec: Refreshing state... [id=serverless_lambda_permissons]
@@ -388,6 +389,39 @@ Ejecutamos nuevamente el paso 6 de la seccion anterior y debemos obtener una res
 ```bash
  {"statusCode":200,"headers":{"Content-Type":"text/html; charset=utf-8"},"body":"<p>Hola DevWeekLima 2019!</p>"}
 ```
+
+## Rollback a la version anterior
+Como ya se tiene terminado el desarrollo de la definicion de la insfraestructura ahora si es posible hacer el script reutilizable y podemos regresar a la version anterior:
+
+```terraform
+$terraform apply -var="app_version=1.0.0"
+```
+
+## Limpiar todo y destruir infraestructura
+Tu puedes destruir todos los recursos creados con este sample usando `terraform destroy`. Esta capacidad es muy util cuando requiramos recrear ambientes o dar de baja.
+
+---
+**NOTE**
+Como los S3 bucket versions se crearon con AWS CLI se deberia borrar estos primero para que terraform destruya el estado conocido de la Infraestructura. AWS puede demorar unos minutos en refrescar la eliminacion de las versiones.
+
+---
+
+```terraform
+$ terraform destroy -var secret_key=<my_aws_secret_key> -var app_version=0.0.0
+
+
+Plan: 0 to add, 0 to change, 3 to destroy.
+
+Do you really want to destroy all resources?
+  Terraform will destroy all your managed infrastructure, as shown above.
+  There is no undo. Only 'yes' will be accepted to confirm.
+
+  Enter a value: yes
+.....
+
+Apply complete! Resources: 0 added, 0 changed, 3 destroyed.
+```
+
 
 ## Author
 @czelabueno
